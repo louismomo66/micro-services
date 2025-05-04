@@ -17,7 +17,7 @@
 # FROM alpine:latest
 
 # RUN mkdir /app
-# RUN mv /app/cmd/api/brokerApp /app/brokerApp
+# RUN mv /app/cmd/api/brokerApp /app
 # COPY --from=builder /app/cmd/api/brokerApp /app
 # RUN ls -la /app/
 # CMD ["/app/brokerApp"]
@@ -43,10 +43,11 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o brokerApp ./cmd/a
 # Runtime
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
-
+RUN mkdir /app
 WORKDIR /app
-COPY --from=builder /app/brokerApp .
+
+COPY brokerApp /app
+
 RUN chmod +x /app/brokerApp
 
 EXPOSE 8083
