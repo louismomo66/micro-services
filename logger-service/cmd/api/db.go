@@ -22,6 +22,8 @@ if err != nil{
 	log.Println("Error connecting:", err)
 	return nil, err
 }
+
+log.Println("Connected to mongo!")
 return c, nil
 
 }
