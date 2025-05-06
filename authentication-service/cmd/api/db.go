@@ -13,8 +13,9 @@ import (
 func initDB() *sql.DB {
 	conn := connectToDB()
 	if conn == nil {
-		log.Panic("can't connect to database")
+		log.Panic("connectToDB returned nil connection!")
 	}
+	log.Println("Successfully connected to DB. Verifying tables...")
 	if err := verifyTables(conn); err != nil {
 		log.Printf("Database verification failed: %v", err)
 		// Attempt to initialize schema

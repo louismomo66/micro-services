@@ -9,6 +9,7 @@
                 <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Broker</a>
                 <a id="authBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Auth</a>
                 <a id="logbtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Log</a>
+                <a id="mailbtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Mail</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -40,6 +41,42 @@
     let output = document.getElementById("output");
     let sent = document.getElementById("payload");
     let received = document.getElementById("received");
+    let mailbtn = document.getElementById("mailbtn");
+    
+    mailbtn.addEventListener("click", function() {
+        const payload = {
+            action: "mail",
+            mail: {
+                from: "me@example.com",
+                to: "you@there.com",
+                subject: "Test mail",
+                message: "This is a test mail",
+            }
+        }
+        const headers = new Headers();
+        headers.append("Content-Type", "application/json");
+        const body = {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: headers,
+        }
+        fetch("http:\/\/localhost:8084/handle", body)
+            .then((response) => response.json())
+            .then((data) => {
+                sent.innerHTML = JSON.stringify(payload, undefined, 4);
+                received.innerHTML = JSON.stringify(data, undefined, 4);
+                if (data.error) {
+                    console.log(data.message);
+                    output.innerHTML += `<br><strong>Error</strong> ${data.message}`;
+                } else {
+                    output.innerHTML += `<br><strong>Response from broker service</strong>: ${data.message}`;
+                }
+            })
+            .catch((error) => {
+                output.innerHTML += "<br><br>Error: " + error;
+            })
+    });
+
 
 logbtn.addEventListener("click",function(){
     const payload = {
@@ -57,7 +94,7 @@ logbtn.addEventListener("click",function(){
         body: JSON.stringify(payload),
         headers: headers,
     }
-    fetch("http:\/\/localhost:8084", body)
+    fetch("http:\/\/localhost:8084/handle", body)
         .then((response) => response.json())
         .then((data) => {
             sent.innerHTML = JSON.stringify(payload, undefined, 4);
